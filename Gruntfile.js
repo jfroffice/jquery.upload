@@ -9,9 +9,9 @@ module.exports = function(grunt) {
       js: {
         files: ['src/js/*.js']
       },
-      options: {
+      /*options: {
         livereload: true,
-      },
+      },*/
     },
     connect: {
       server: {

@@ -1,8 +1,8 @@
 console.log('initialize');
 
 var xhr = new XMLHttpRequest();
-xhr.open('GET', '/css/style.css');
-xhr.timeout = 5000;
+xhr.open('POST', 'http://127.0.0.1:8001/upload');
+//xhr.timeout = 5000;
 
 xhr.addEventListener('load', function(e) {
 	console.log('load');
@@ -52,4 +52,11 @@ xhr.onload = function() {
 	}
 }
 
-xhr.send();
+var formData = new FormData();
+formData.append('id', 123456);
+formData.append('param', 'soleil');
+
+//var array = new Uint8Array([1, 5, 6, 9]);
+//xhr.send(array.buffer);
+
+xhr.send(formData);
