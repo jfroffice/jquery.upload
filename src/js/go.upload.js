@@ -1,8 +1,10 @@
-function go() {
+var URL_UPLOAD = 'http://127.0.0.1:8001/upload';
+
+function uploadOne(files, data, index, cb) {
 	console.log('initialize');
 
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', 'http://127.0.0.1:8001/upload');
+	xhr.open('POST', URL_UPLOAD);
 	//xhr.timeout = 5000;
 
 	xhr.addEventListener('load', function(e) {
@@ -10,8 +12,9 @@ function go() {
 		console.log(e);
 	});
 
-	xhr.addEventListener('error', function() {
+	xhr.addEventListener('error', function(e) {
 		console.log('error');
+		console.log(e);
 	});
 
 	xhr.addEventListener('loadstart', function(e) {
@@ -32,7 +35,6 @@ function go() {
 		console.log('timeout');
 	});
 
-
 	xhr.addEventListener('progress', function(e) {
 		console.log(e);
 		console.log('progress');
@@ -46,56 +48,64 @@ function go() {
 	xhr.onload = function() {
 		console.log('onload function');
 		console.log(this);
-		if (this.status === 200) {
-			console.log('OK');
-		} else {
-			console.log('err');
-		}
+		cb(this.status);
 	}
 
 	var formData = new FormData();
-	formData.append('id', 123456);
-	formData.append('param', 'soleil');
+	if (data) {
+		formData.append('data', data);
+	}
+	formData.append('file', files[index]);
 
 	xhr.send(formData);
 }
 
+function getFilesInput($files) {
 
-function getParamName(options) {
-    var fileInput = $(options.fileInput),
-        paramName = options.paramName;
-    if (!paramName) {
-        paramName = [];
-        fileInput.each(function () {
-            var input = $(this),
-                name = input.prop('name') || 'files[]',
-                i = (input.prop('files') || [1]).length;
-            while (i) {
-                paramName.push(name);
-                i -= 1;
-            }
-        });
-        if (!paramName.length) {
-            paramName = [fileInput.prop('name') || 'files[]'];
+    var files = $.makeArray($files.prop('files')),
+        value;
+
+
+    if (!files.length) {
+        value = $files.prop('value');
+        if (!value) {
+            return [];
         }
-    } else if (!$.isArray(paramName)) {
-        paramName = [paramName];
+        // If the files property is not available, the browser does not
+        // support the File API and we add a pseudo File object with
+        // the input value as name with path information removed:
+        files = [{name: value.replace(/^.*\\/, '')}];
+    } else if (files[0].name === undefined && files[0].fileName) {
+        // File normalization for Safari 4 and Firefox 3:
+        $.each(files, function (index, file) {
+            file.name = file.fileName;
+            file.size = file.fileSize;
+        });
     }
-    return paramName;
-};
+    return files;
+}
 
+function upload(files, data, i) {
 
-//var array = new Uint8Array([1, 5, 6, 9]);
-//xhr.send(array.buffer);
+	if (i === files.length) {
+		return;
+	}
 
+	uploadOne(files, data, i, function(status) {
+		if (status === 200) {
+			upload(files, data, i+1);
+		} else {
+			alert('ERROR');
+		}
+	});
+}
 
 $('#files').on("change", function(e) {
-	console.log(e);
 
-	var paramName = getParamName({
-		fileInput: '#files',
-		paramName: 'file'
-	});
+	var data = {
+		id: 123456879,
+		licence: 'AD-4-47889454'
+	};
 
-	console.log(paramName);
+	upload(getFilesInput($(this)), JSON.stringify(data), 0);
 });
