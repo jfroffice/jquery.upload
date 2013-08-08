@@ -62,6 +62,8 @@ function uploadOne(files, data, index, cb) {
 
 function getFilesInput($files) {
 
+	console.log($files.prop('files'));
+
     var files = $.makeArray($files.prop('files')),
         value;
 
@@ -103,8 +105,9 @@ function upload(files, data, i) {
 $('#files').on("change", function(e) {
 
 	var data = {
-		id: 123456879,
-		licence: 'AD-4-47889454'
+		id: 'my_id',
+		module: 'my_module',
+		filename: 'filename.jpg'
 	};
 
 	upload(getFilesInput($(this)), JSON.stringify(data), 0);
