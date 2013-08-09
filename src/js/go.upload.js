@@ -1,8 +1,9 @@
 $('#files').upload({
-	url: 'http://127.0.0.1:8001/upload',
+	url: 'http://u01.dlyce.com',
+	//url: 'http://127.0.0.1:8001',
 	data: {
-		id: 'my_id',
-		module: 'my_module',
-		filename: 'filename.jpg'
+		id: 'ppa',
+		module: 'licence',
+		filename: 'A-12-45654512.jpg'
 	}
 });
