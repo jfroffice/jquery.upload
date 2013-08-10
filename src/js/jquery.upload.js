@@ -1,11 +1,8 @@
 (function($, undefined) {
 
-	var xhrFileUpload = !!(window.XMLHttpRequestUpload && window.FileReader),
-    	xhrFormDataFileUpload = !!window.FormData;
-
 	function uploadOne(url, files, data, index, cb) {
 
-		var xhr = new XMLHttpRequest();
+		/*var xhr = new XMLHttpRequest();
 		xhr.open('POST', url);
 		//xhr.timeout = 5000;
 
@@ -52,14 +49,28 @@
 			console.log(this);
 			cb(this.status);
 		};
-
+*/
 		var formData = new FormData();
 		if (data) {
 			formData.append('data', data);
 		}
 		formData.append('file', files[index]);
 
-		xhr.send(formData);
+	/*	xhr.send(formData);*/
+
+		$.ajax({
+	       url: url,
+	       type: "POST",
+	       data: formData,
+	       processData: false,
+	       contentType: false,
+	       success: function(response) {
+				cb(null, response);
+	       },
+	       error: function(jqXHR, textStatus, errorMessage) {
+	           cb(errorMessage, textStatus);
+	       }
+	    });
 	}
 
 	function upload(url, files, data, i) {
@@ -68,11 +79,14 @@
 			return;
 		}
 
-		uploadOne(url, files, data, i, function(status) {
-			if (status === 200) {
-				upload(url, files, data, i+1);
-			} else {
+		uploadOne(url, files, data, i, function(err, response) {
+			if (err) {
 				alert('ERROR');
+				console.log(err);
+				console.log(response);
+			} else {
+				console.log(response);
+				upload(url, files, data, i+1);
 			}
 		});
 	}
@@ -82,9 +96,6 @@
 	}
 
 	$.fn.upload = function(options) {
-
-		console.log(xhrFileUpload);
-		console.log(xhrFormDataFileUpload);
 
 		if (!options) {
 			return;
@@ -98,7 +109,7 @@
 		}
 
 		$(this).on("change", function(e) {
-        	upload(url, getFilesInput($(this)), data ? JSON.stringify(data) : null, 0);
+			upload(url, getFilesInput($(this)), data ? JSON.stringify(data) : null, 0);
         });
 	};
 
