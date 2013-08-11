@@ -1,5 +1,8 @@
 (function($, undefined) {
 
+	// TODO test de non compatibilité IE9, etc...
+	var onProgress;
+
 	function uploadOne(url, file, data, cb) {
 
 		var formData = new FormData();
@@ -8,23 +11,6 @@
 		}
 		formData.append('file', file);
 
- 		// workaround because jqXHR does not expose upload property
-		var xhr = function() {
-            var xhr = $.ajaxSettings.xhr();
-            if (xhr.upload) {
-                xhr.upload.addEventListener('progress', function(event) {
-                    var percent = 0;
-                    var position = event.loaded || event.position; /*event.position is deprecated*/
-                    var total = event.total;
-                    if (event.lengthComputable) {
-                        percent = Math.ceil(position / total * 100);
-                    }
-                    console.log(percent);
-                }, false);
-            }
-            return xhr;
-        };
-
 		$.ajax({
 			url: url,
 			type: "POST",
@@ -32,28 +18,34 @@
 			processData: false,
 			contentType: false,
 			cache: false,
-			xhr: xhr,
-			success: function(response) {
-				cb(null, response);
+			xhr: function() { // workaround because jqXHR does not expose upload property
+	            var xhr = $.ajaxSettings.xhr();
+	            if (xhr.upload && onProgress) {
+	                xhr.upload.addEventListener('progress', function(e) {
+	                	onProgress(e);
+	                }, false);
+	            }
+	            return xhr;
+	        },
+			success: function(message) {
+				cb(null, null, message);
 			},
-			error: function(jqXHR, textStatus, errorMessage) {
-				cb(errorMessage, textStatus);
+			error: function(jqXHR, textStatus, message) {
+				cb(jqXHR, textStatus, message);
 			}
 		});
 	}
 
 	function upload(url, files, data, i) {
-
-		if (i === files.length) {
-			return;
-		}
-
-		uploadOne(url, files[i], data, function(err, response) {
-			if (err) {
-				console.log(err);
-				console.log(response);
+		uploadOne(url, files[i], data, function(jqXHR, textStatus, message) {
+			if (jqXHR) {
+				onError && onError(jqXHR, textStatus, message);
 			} else {
-				upload(url, files, data, i+1);
+				if ((i+1) === files.length) {
+					onSuccess && onSuccess(message);
+				} else {
+					upload(url, files, data, i+1);
+				}
 			}
 		});
 	}
@@ -74,6 +66,10 @@
 		if (!url) {
 			return;
 		}
+
+		onProgress = options.onProgress,
+		onSuccess = options.onSuccess,
+		onError = options.onError;
 
 		$(this).on("change", function(e) {
 			upload(url, getFilesInput($(this)), data ? JSON.stringify(data) : null, 0);
