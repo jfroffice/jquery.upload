@@ -19,14 +19,14 @@
 			contentType: false,
 			cache: false,
 			xhr: function() { // workaround because jqXHR does not expose upload property
-	            var xhr = $.ajaxSettings.xhr();
-	            if (xhr.upload && onProgress) {
-	                xhr.upload.addEventListener('progress', function(e) {
-	                	onProgress(e);
-	                }, false);
-	            }
-	            return xhr;
-	        },
+				var xhr = $.ajaxSettings.xhr();
+				if (xhr.upload && onProgress) {
+					xhr.upload.addEventListener('progress', function(e) {
+						onProgress(e);
+					}, false);
+				}
+				return xhr;
+			},
 			success: function(message) {
 				cb(null, null, message);
 			},
@@ -67,8 +67,8 @@
 			return;
 		}
 
-		onProgress = options.onProgress,
-		onSuccess = options.onSuccess,
+		onProgress = options.onProgress;
+		onSuccess = options.onSuccess;
 		onError = options.onError;
 
 		$(this).on("change", function(e) {
