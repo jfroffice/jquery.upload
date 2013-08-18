@@ -1,10 +1,8 @@
 $('#files').upload({
 	url: 'http://u01.dlyce.com',
-	//url: 'http://127.0.0.1:8001/upload',
 	data: {
-		id: 'ppa',
-		module: 'licence',
-		filename: 'A-12-45654512.jpg'
+		id: 'my_id',
+		module: 'my_module'
 	},
 	onProgress: function(e) {
 		if (e.lengthComputable) {
@@ -12,8 +10,12 @@ $('#files').upload({
             console.log(percent);
         }
 	},
-	onSuccess: function(message) {
-		console.log(message);
+	onSuccess: function(data) {
+		$('#results').html('')
+			.append($('<img/>').attr('src', data.url + '/512' ))
+			.append($('<img/>').attr('src', data.url + '/256' ))
+			.append($('<img/>').attr('src', data.url + '/128' ))
+			.append($('<img/>').attr('src', data.url + '/64' ));
 	},
 	onError: function(jqXHR, textStatus, message) {
 		console.log(jqXHR);

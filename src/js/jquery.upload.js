@@ -1,7 +1,7 @@
 (function($, undefined) {
 
 	// TODO test de non compatibilité IE9, etc...
-	var onProgress;
+	var onProgress, onError, onSuccess, onStart, initData;
 
 	function uploadOne(url, file, data, cb) {
 
@@ -67,11 +67,18 @@
 			return;
 		}
 
+		onStart = options.onStart;
 		onProgress = options.onProgress;
 		onSuccess = options.onSuccess;
 		onError = options.onError;
+		initData = options.initData;
 
 		$(this).on("change", function(e) {
+			if (initData) {
+				data = initData();
+			}
+
+			onStart && onStart();
 			upload(url, getFilesInput($(this)), data ? JSON.stringify(data) : null, 0);
         });
 	};
