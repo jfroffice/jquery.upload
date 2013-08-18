@@ -1,7 +1,7 @@
 (function($, undefined) {
 
-	// TODO test de non compatibilité IE9, etc...
-	var onProgress, onError, onSuccess, onStart, initData;
+	// TODO test compatibility IE9, etc...
+	var progress, failed, done, start, asyncData;
 
 	function uploadOne(url, file, data, cb) {
 
@@ -20,9 +20,9 @@
 			cache: false,
 			xhr: function() { // workaround because jqXHR does not expose upload property
 				var xhr = $.ajaxSettings.xhr();
-				if (xhr.upload && onProgress) {
+				if (xhr.upload && progress) {
 					xhr.upload.addEventListener('progress', function(e) {
-						onProgress(e);
+						progress(e);
 					}, false);
 				}
 				return xhr;
@@ -39,10 +39,10 @@
 	function upload(url, files, data, i) {
 		uploadOne(url, files[i], data, function(jqXHR, textStatus, message) {
 			if (jqXHR) {
-				onError && onError(jqXHR, textStatus, message);
+				failed && failed(jqXHR, textStatus, message);
 			} else {
 				if ((i+1) === files.length) {
-					onSuccess && onSuccess(message);
+					done && done(message);
 				} else {
 					upload(url, files, data, i+1);
 				}
@@ -67,18 +67,18 @@
 			return;
 		}
 
-		onStart = options.onStart;
-		onProgress = options.onProgress;
-		onSuccess = options.onSuccess;
-		onError = options.onError;
-		initData = options.initData;
+		start = options.start;
+		progress = options.progress;
+		done = options.done;
+		failed = options.failed;
+		asyncData = options.asyncData;
 
 		$(this).on("change", function(e) {
-			if (initData) {
-				data = initData();
+			if (asyncData) {
+				data = asyncData();
 			}
 
-			onStart && onStart();
+			start && start();
 			upload(url, getFilesInput($(this)), data ? JSON.stringify(data) : null, 0);
         });
 	};
