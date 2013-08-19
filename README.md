@@ -35,7 +35,7 @@ in your DOM.
 ```
 <input type="file" id="files" name="files[]">
 ```
-and in your JS file.
+in your JS file.
 ```
 $('#files').upload({
     url: 'http://u01.dlyce.com',
@@ -74,11 +74,10 @@ Parameters
 - ```done``` function callback when it's done
 - ```failed``` function callback when it's failed
 
-Credits
--------
-[jquery-file-upload](https://github.com/blueimp/jQuery-File-Upload) by blueimp
-
 Licence
 -------
 MIT
 
+Credits
+-------
+[jquery-file-upload](https://github.com/blueimp/jQuery-File-Upload) by blueimp
