@@ -73,3 +73,12 @@ Parameters
 - ```progress``` function callback when upload progress
 - ```done``` function callback when it's done
 - ```failed``` function callback when it's failed
+
+Credits
+-------
+[jquery-file-upload](https://github.com/blueimp/jQuery-File-Upload)
+
+Licence
+-------
+MIT
+
