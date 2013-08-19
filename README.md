@@ -76,7 +76,7 @@ Parameters
 
 Credits
 -------
-[jquery-file-upload](https://github.com/blueimp/jQuery-File-Upload)
+[jquery-file-upload](https://github.com/blueimp/jQuery-File-Upload) by blueimp
 
 Licence
 -------
