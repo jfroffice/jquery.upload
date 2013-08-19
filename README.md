@@ -7,17 +7,21 @@ Multiple events might be listen as start, failed, progress, done.
 
 Browser supported
 -----------------
-- IE10 >= (cause using FormData to do CORS upload)
-- Chrome
-- Firefox
+- IE10+
+- Chrome 28+
+- Firefox 22+
+
+Browser not supported
+---------------------
+- IE9 
+- Safari 5.1.7 (windows)
+(Cause FormData & CORS is not fully supported)
 
 Dependency
 ----------
 ```
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="components/jquery/jquery.js"><\/script>')</script>
 ```
-you install jQuery bower dependency in components directory.
 
 Installation
 ------------
